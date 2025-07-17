@@ -1,0 +1,12 @@
+
+shuffle_accs: true
+
+delay_before_start:
+  min: 10
+  max: 30
+
+delay_between_accs:
+  min: 30
+  max: 60
+
+capmonster_api_key: ""
