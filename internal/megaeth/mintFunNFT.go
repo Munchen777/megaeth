@@ -15,7 +15,7 @@ import (
 	"main/pkg/global"
 )
 
-func MintNFT(accountData accTypes.AccountData) (bool, error) {
+func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 	log.Infof("[%d/%d] | %s | [MintNFT] | Start Minting NFT ...\n",
 		global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
 	)
