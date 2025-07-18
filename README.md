@@ -1,8 +1,14 @@
 # MegaETH
 
+## Functions
+* Proxy supports (http / https / socks4/ socks5)
+* Multithreading
+
 ## 🤖 Modules
 - Faucet
 - Mint Start Fun NFT
+- Mint Megamafia NFT
+- Mint Mega Cat NFT
 
 ## 📋 System Requirements
 
