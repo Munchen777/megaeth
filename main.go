@@ -129,7 +129,7 @@ func main() {
 
 	log.Printf("Successfully Loaded %d Accounts\n", len(global.AccountsList))
 
-	inputUserData := "1"//inputUser("Threads: ")
+	inputUserData := inputUser("\nThreads: ")
 	threads, err := strconv.Atoi(inputUserData)
 
 	if err != nil {
@@ -142,17 +142,19 @@ func main() {
 	// build CLI
 	utils.Cli()
 
+	// sleep before start
 	delayMin, delayMax := global.Config.DelayBeforeStart.Min, global.Config.DelayBeforeStart.Max
+	utils.Sleep(delayMin, delayMax)
 
 	switch global.Module {
 	case "Mint FUN Starts NFT":
-		// delay before start
-		utils.Sleep(delayMin, delayMax)
-		processAccounts(megaeth.MintNFT, threads)
+		processAccounts(megaeth.MintFunNFT, threads)
 	case "Faucet test tokens":
-		// delay before start
-		utils.Sleep(delayMin, delayMax)
 		processAccounts(megaeth.FaucetTokens, threads)
+	case "Mint Megamafia NFT":
+		processAccounts(megaeth.MintMegamafiaNFT, threads)
+	case "Mint Mega Cat NFT":
+		processAccounts(megaeth.MintMegaCatNFT, threads)
 	}
 
 	log.Printf("The Work Has Been Successfully Finished\n")

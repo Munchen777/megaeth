@@ -7,6 +7,7 @@ import (
 	"math/big"
 
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
+	log "github.com/sirupsen/logrus"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -47,6 +48,7 @@ func (c *Client) BuildTransaction(
 		msg := fmt.Sprintf("[%d/%d] | %s | [BuildTransaction] | Problem with getting nonce\n",
 			global.CurrentProgress, global.TargetProgress, c.Account.AccountAddress,
 		)
+		log.Error(msg)
 		return nil, errors.New(msg)
 	}
 	
@@ -56,6 +58,7 @@ func (c *Client) BuildTransaction(
 		msg := fmt.Sprintf("[%d/%d] | %s | [BuildTransaction] | Problem with getting chainID\n",
 			global.CurrentProgress, global.TargetProgress, c.Account.AccountAddress,
 		)
+		log.Error(msg)
 		return nil, errors.New(msg)
 	}
 
@@ -72,6 +75,7 @@ func (c *Client) BuildTransaction(
 		msg := fmt.Sprintf("[%d/%d] | %s | [BuildTransaction] | Problem with suggesting priority fee\n",
 			global.CurrentProgress, global.TargetProgress, c.Account.AccountAddress,
 		)
+		log.Error(msg)
 		return nil, errors.New(msg)
 	}
 	baseFee := header.BaseFee
@@ -81,6 +85,7 @@ func (c *Client) BuildTransaction(
 		msg := fmt.Sprintf("[%d/%d] | %s | [BuildTransaction] | Problem with suggesting priority fee\n",
 			global.CurrentProgress, global.TargetProgress, c.Account.AccountAddress,
 		)
+		log.Error(msg)
 		return nil, errors.New(msg)
 	}
 
@@ -91,6 +96,7 @@ func (c *Client) BuildTransaction(
 		msg := fmt.Sprintf("[%d/%d] | %s | [BuildTransaction] | Problem with estimating gas\n",
 			global.CurrentProgress, global.TargetProgress, c.Account.AccountAddress,
 		)
+		log.Error(msg)
 		return nil, errors.New(msg)
 	}
 

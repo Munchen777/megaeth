@@ -2,6 +2,7 @@ package types
 
 import (
 	"crypto/ecdsa"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -13,6 +14,13 @@ type AccountData struct {
 	AccountKey     *ecdsa.PrivateKey
 	AccountAddress common.Address
 	AccountLogData string
+}
+
+type ClaimStruct struct {
+	Proof       []common.Hash
+	LeafIndex   *big.Int
+	LeafAmount  *big.Int
+	LeafAddress common.Address
 }
 
 type Settings struct {

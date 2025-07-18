@@ -1,0 +1,52 @@
+[
+  {
+    "name": "claim",
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "name": "claim",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "proof",
+            "type": "bytes32[]"
+          },
+          {
+            "name": "leafIndex",
+            "type": "uint256"
+          },
+          {
+            "name": "leafAmount",
+            "type": "uint256"
+          },
+          {
+            "name": "leafAddress",
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "name": "signature",
+        "type": "bytes"
+      }
+    ],
+    "outputs": []
+  }
+]

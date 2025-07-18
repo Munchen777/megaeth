@@ -25,6 +25,7 @@ func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with client initialization\n",
 			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
 		)
+		log.Error(msg)
 		return false, errors.New(msg)
 	}
 
@@ -38,6 +39,7 @@ func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with building transaction: %v\n",
 			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 		)
+		log.Error(msg)
 		return false, errors.New(msg)
 	}
 
@@ -46,6 +48,7 @@ func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with getting chainID: %v\n",
 			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 		)
+		log.Error(msg)
 		return false, errors.New(msg)
 	}
 
@@ -58,6 +61,7 @@ func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with signing tx: %v\n",
 			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 		)
+		log.Error(msg)
 		return false, errors.New(msg)
 	}
 
@@ -68,6 +72,7 @@ func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with signing tx: %v\n",
 			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 		)
+		log.Error(msg)
 		return false, errors.New(msg)
 	} else {
 		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Successfully executed transaction\n",

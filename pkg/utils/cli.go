@@ -15,6 +15,8 @@ func Cli() {
 		Items: []string{
 			"Faucet test tokens",
 			"Mint FUN Starts NFT",
+			"Mint Megamafia NFT",
+			"Mint Mega Cat NFT",
 		},
 	}
 
