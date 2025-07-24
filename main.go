@@ -41,16 +41,9 @@ func handlePanic() {
 }
 
 func processAccounts(func_obj types.ModuleFunction, threads int) {
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, threads)
-
-	for _, account := range global.AccountsList {
-		wg.Add(1)
-		sem <- struct{}{}
-
-		go func(acc types.AccountData) {
-			defer wg.Done()
-			func_obj(acc)
+	if threads == 1 {
+		for _, account := range global.AccountsList {
+			func_obj(account)
 
 			global.CurrentProgress++
 
@@ -58,11 +51,33 @@ func processAccounts(func_obj types.ModuleFunction, threads int) {
 				global.Config.DelayBetweenAccs.Min,
 				global.Config.DelayBetweenAccs.Max,
 			)
-			<-sem
-		}(account)
+		}
+
+	} else {
+		var wg sync.WaitGroup
+		sem := make(chan struct{}, threads)
+	
+		for _, account := range global.AccountsList {
+			wg.Add(1)
+			sem <- struct{}{}
+	
+			go func(acc types.AccountData) {
+				defer wg.Done()
+				func_obj(acc)
+	
+				global.CurrentProgress++
+	
+				utils.Sleep(
+					global.Config.DelayBetweenAccs.Min,
+					global.Config.DelayBetweenAccs.Max,
+				)
+				<-sem
+			}(account)
+		}
+	
+		wg.Wait()
 	}
 
-	wg.Wait()
 }
 
 func initLog() {
@@ -155,6 +170,8 @@ func main() {
 		processAccounts(megaeth.MintMegamafiaNFT, threads)
 	case "Mint Mega Cat NFT":
 		processAccounts(megaeth.MintMegaCatNFT, threads)
+	case "Mint Blackhole NFT":
+		processAccounts(megaeth.MintBlackholeNFT, threads)
 	}
 
 	log.Printf("The Work Has Been Successfully Finished\n")

@@ -201,6 +201,8 @@ func resultCaptcha(accountData types.AccountData, taskId int) (string, error) {
 				global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
 			)
 			time.Sleep(3 * time.Second)
+			fasthttp.ReleaseRequest(req)
+			fasthttp.ReleaseResponse(resp)
 
 		} else if status == "ready" {
 			return gjson.Get(json, "solution.token").String(), nil

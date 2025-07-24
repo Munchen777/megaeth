@@ -17,6 +17,7 @@ func Cli() {
 			"Mint FUN Starts NFT",
 			"Mint Megamafia NFT",
 			"Mint Mega Cat NFT",
+			"Mint Blackhole NFT",
 		},
 	}
 
