@@ -71,14 +71,14 @@ func checkBalance(accountData types.AccountData) bool {
 				result = false
 
 			} else {
-				log.Printf("[%d/%d] | %s | [checkBalance] | You have enough balance %f (>0.01): %v\n",
-					global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, balance, err,
+				log.Printf("[%d/%d] | %s | [checkBalance] | You have enough balance %f (>0.01)\n",
+					global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, balance,
 				)
 				result = true
 				break
 			}
 
-		} else if errorId == 1 {
+		} else {
 			log.Warnf("[%d/%d] | %s | [checkBalance] | External error while checking balance: %v\n",
 				global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 			)
@@ -90,7 +90,7 @@ func checkBalance(accountData types.AccountData) bool {
 
 func createTask(accountData types.AccountData) (int, error) {
 	var err error
-	var errorCode int
+	var errorCode int = -1
 	var url = "https://api.capmonster.cloud/createTask"
 
 	for i:= 1; i < 6; i++ {
