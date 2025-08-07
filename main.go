@@ -172,6 +172,8 @@ func main() {
 		processAccounts(megaeth.MintMegaCatNFT, threads)
 	case "Mint Blackhole NFT":
 		processAccounts(megaeth.MintBlackholeNFT, threads)
+	case "Mint Xyroph NFT":
+		processAccounts(megaeth.MintXyrophNFT, threads)
 	}
 
 	log.Printf("The Work Has Been Successfully Finished\n")
