@@ -9,6 +9,7 @@
 - Mint Start Fun NFT
 - Mint Megamafia NFT
 - Mint Mega Cat NFT
+- Mint Blackhole NFT
 
 ## 📋 System Requirements
 
