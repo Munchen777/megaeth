@@ -70,7 +70,6 @@ func verifyTransaction(
 	}
 
 	req := fasthttp.AcquireRequest()
-	defer fasthttp.ReleaseRequest(req)
 
 	req.SetRequestURI(url)
 	req.Header.SetMethod("POST")
@@ -98,9 +97,8 @@ func verifyTransaction(
 	req.Header.Set("x-sdk-platform", "browser")
 	req.Header.Set("x-sdk-version", "5.105.16")
 
-
 	resp := fasthttp.AcquireResponse()
-
+	defer fasthttp.ReleaseRequest(req)
 	defer fasthttp.ReleaseResponse(resp)
 
 	if err := clientHTTP.Do(req, resp); err != nil {

@@ -6,9 +6,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"math/rand"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"main/internal/megaeth"
@@ -56,17 +58,17 @@ func processAccounts(func_obj types.ModuleFunction, threads int) {
 	} else {
 		var wg sync.WaitGroup
 		sem := make(chan struct{}, threads)
-	
+
 		for _, account := range global.AccountsList {
 			wg.Add(1)
 			sem <- struct{}{}
-	
+
 			go func(acc types.AccountData) {
 				defer wg.Done()
 				func_obj(acc)
-	
+
 				global.CurrentProgress++
-	
+
 				utils.Sleep(
 					global.Config.DelayBetweenAccs.Min,
 					global.Config.DelayBetweenAccs.Max,
@@ -74,10 +76,8 @@ func processAccounts(func_obj types.ModuleFunction, threads int) {
 				<-sem
 			}(account)
 		}
-	
 		wg.Wait()
 	}
-
 }
 
 func initLog() {
@@ -143,6 +143,14 @@ func main() {
 	}
 
 	log.Printf("Successfully Loaded %d Accounts\n", len(global.AccountsList))
+
+	// shuffle accounts
+	if global.Config.ShuffleAccs {
+		rand.NewSource(time.Now().Unix())
+		rand.Shuffle(len(global.AccountsList), func(i, j int) {
+			global.AccountsList[i], global.AccountsList[j] = global.AccountsList[j], global.AccountsList[i]
+		})
+	}
 
 	inputUserData := inputUser("\nThreads: ")
 	threads, err := strconv.Atoi(inputUserData)

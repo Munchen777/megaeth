@@ -30,22 +30,18 @@ func checkBalance(accountData types.AccountData) bool {
 
 		req := fasthttp.AcquireRequest()
 
-		defer fasthttp.ReleaseRequest(req)
-
 		req.SetRequestURI(url)
 		req.Header.SetMethod("POST")
 		req.SetBody(payloadBytes)
 
 		resp := fasthttp.AcquireResponse()
-
+		defer fasthttp.ReleaseRequest(req)
 		defer fasthttp.ReleaseResponse(resp)
 
 		if err = client.Do(req, resp); err != nil {
 			log.Warnf("[%d/%d] | %s | [checkBalance] | Failed to do request: %v\n",
 				global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 			)
-			fasthttp.ReleaseRequest(req)
-			fasthttp.ReleaseResponse(resp)
 			continue
 		}
 
@@ -109,22 +105,18 @@ func createTask(accountData types.AccountData) (int, error) {
 
 		req := fasthttp.AcquireRequest()
 
-		defer fasthttp.ReleaseRequest(req)
-
 		req.SetRequestURI(url)
 		req.Header.SetMethod("POST")
 		req.SetBody(payloadBytes)
 
 		resp := fasthttp.AcquireResponse()
-
+		defer fasthttp.ReleaseRequest(req)
 		defer fasthttp.ReleaseResponse(resp)
 
 		if err = client.Do(req, resp); err != nil {
 			log.Warnf("[%d/%d] | %s | [checkBalance] | Failed to do request: %v\n",
 				global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 			)
-			fasthttp.ReleaseRequest(req)
-			fasthttp.ReleaseResponse(resp)
 			continue
 		}
 
@@ -165,22 +157,18 @@ func resultCaptcha(accountData types.AccountData, taskId int) (string, error) {
 
 		req := fasthttp.AcquireRequest()
 
-		defer fasthttp.ReleaseRequest(req)
-
 		req.SetRequestURI(url)
 		req.Header.SetMethod("POST")
 		req.SetBody(payloadBytes)
 
 		resp := fasthttp.AcquireResponse()
-
+		defer fasthttp.ReleaseRequest(req)
 		defer fasthttp.ReleaseResponse(resp)
 
 		if err = client.Do(req, resp); err != nil {
 			log.Warnf("[%d/%d] | %s | [resultCaptcha] | Failed to do request: %v\n",
 				global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 			)
-			fasthttp.ReleaseRequest(req)
-			fasthttp.ReleaseResponse(resp)
 			continue
 		}
 
@@ -201,8 +189,6 @@ func resultCaptcha(accountData types.AccountData, taskId int) (string, error) {
 				global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
 			)
 			time.Sleep(3 * time.Second)
-			fasthttp.ReleaseRequest(req)
-			fasthttp.ReleaseResponse(resp)
 
 		} else if status == "ready" {
 			return gjson.Get(json, "solution.token").String(), nil
@@ -226,22 +212,18 @@ func getTokenFaucet(accountData types.AccountData, token string) (bool, error) {
 
 		req := fasthttp.AcquireRequest()
 
-		defer fasthttp.ReleaseRequest(req)
-
 		req.SetRequestURI(url)
 		req.Header.SetMethod("POST")
 		req.SetBody(payloadBytes)
 
 		resp := fasthttp.AcquireResponse()
-
+		defer fasthttp.ReleaseRequest(req)
 		defer fasthttp.ReleaseResponse(resp)
 
 		if err = client.Do(req, resp); err != nil {
 			log.Warnf("[%d/%d] | %s | [getTokenFaucet] | Failed to do request: %v\n",
 				global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
 			)
-			fasthttp.ReleaseRequest(req)
-			fasthttp.ReleaseResponse(resp)
 			continue
 		}
 
