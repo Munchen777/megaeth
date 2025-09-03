@@ -13,6 +13,7 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+
 	"main/internal/megaeth"
 	"main/pkg/global"
 	"main/pkg/types"
@@ -186,6 +187,8 @@ func main() {
 		processAccounts(megaeth.MintLapinNFT, threads)
 	case "Mint Angry Monkeys":
 		processAccounts(megaeth.MintAngryMonkeys, threads)
+	case "Mint Bloom NFT":
+		processAccounts(megaeth.MintBloomNFT, threads)
 	}
 
 	log.Printf("The Work Has Been Successfully Finished\n")
