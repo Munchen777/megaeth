@@ -5,15 +5,16 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"path/filepath"
-	"math/rand"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
+
 	"main/internal/megaeth"
 	"main/pkg/global"
 	"main/pkg/types"
@@ -88,7 +89,7 @@ func initLog() {
 }
 
 func main() {
-    var err error
+	var err error
 
 	// init log
 	initLog()
@@ -111,7 +112,7 @@ func main() {
 	mw := io.MultiWriter(os.Stdout, wr)
 	log.SetOutput(mw)
 
-    // handle panic
+	// handle panic
 	defer handlePanic()
 
 	// init Proxies
@@ -129,9 +130,9 @@ func main() {
 		}
 	}
 
-    accountsListString, err := utils.ReadFileByRows(filepath.Join("config", "private_keys.txt"))
+	accountsListString, err := utils.ReadFileByRows(filepath.Join("config", "private_keys.txt"))
 
-    if err != nil {
+	if err != nil {
 		log.Panicln(err.Error())
 	}
 
