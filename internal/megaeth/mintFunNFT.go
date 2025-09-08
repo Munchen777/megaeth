@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math/big"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/ethereum/go-ethereum/common"
@@ -15,29 +14,31 @@ import (
 	"main/pkg/global"
 )
 
-func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
-	log.Infof("[%d/%d] | %s | [MintNFT] | Start Minting NFT ...\n",
-		global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
+func (f FunNFT) MintFunNFT(ctx context.Context, accountData accTypes.AccountData) (bool, error) {
+	log.Infof("[%d/%d] | %s | [%s] | Start minting ...\n",
+		global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, f.DisplayName,
 	)
+
+	var contractAddress = f.ContractAddress
 
 	client, ok := internal.GetClient(&accountData)
 	if !ok {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with client initialization\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with client initialization\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, f.DisplayName,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
 	}
 
 	tx, err := client.BuildTransaction(
-		"0xb8027dca96746f073896c45f65b720f9bd2afee7",
-		common.FromHex("0x1249c58b"),
-		big.NewInt(0),
+		contractAddress,
+		common.FromHex(f.Data),
+		f.Value,
 	)
 
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with building transaction: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with building transaction: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, f.DisplayName, err,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
@@ -45,8 +46,8 @@ func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 
 	chainID, err := client.GetChainID()
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with getting chainID: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with getting chainID: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, f.DisplayName, err,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
@@ -58,25 +59,23 @@ func MintFunNFT(accountData accTypes.AccountData) (bool, error) {
 		client.Account.AccountKey,
 	)
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with signing tx: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with signing tx: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, f.DisplayName, err,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
 	}
 
-	ctx := context.Background()
-
 	err = client.Rpc.SendTransaction(ctx, signedTx)
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Problem with signing tx: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with signing tx: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, f.DisplayName, err,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
 	} else {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintNFT] | Successfully executed transaction\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Successfully executed transaction\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, f.DisplayName,
 		)
 		log.Info(msg)
 	}

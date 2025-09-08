@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	log "github.com/sirupsen/logrus"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 
 	"main/pkg/global"
 )
@@ -27,6 +28,10 @@ func Sleep(delayMin int, delayMax int) {
 
 // LoadABI loads ABI from defined filepath
 func LoadABI(filepath string) (abi.ABI, error) {
+	mutex := &sync.Mutex{}
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	abiFile, err := os.ReadFile(filepath)
 
 	if err != nil {

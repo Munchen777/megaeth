@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -42,42 +43,40 @@ func handlePanic() {
 	}
 }
 
+func processAccount(
+	ctx context.Context,
+	sem chan struct{},
+	account types.AccountData,
+	func_obj types.ModuleFunction,
+	wg *sync.WaitGroup,
+	) {
+	defer wg.Done()
+	defer func() { <-sem }()
+	func_obj(ctx, account)
+}
+
 func processAccounts(func_obj types.ModuleFunction, threads int) {
-	if threads == 1 {
-		for _, account := range global.AccountsList {
-			func_obj(account)
+	wg := &sync.WaitGroup{}
+	sem := make(chan struct{}, threads)
+	ctx := context.Background()
+	ticker := time.NewTicker(
+		time.Duration(global.Config.DelayBetweenAccs.Min) * time.Second,
+	)
+	defer ticker.Stop()
 
-			global.CurrentProgress++
-
-			utils.Sleep(
-				global.Config.DelayBetweenAccs.Min,
-				global.Config.DelayBetweenAccs.Max,
-			)
+	for i, account := range global.AccountsList {
+		if i >= 1 {
+			<-ticker.C
+			log.Infof("Sleep %d seconds ...", global.Config.DelayBetweenAccs.Min)
 		}
 
-	} else {
-		var wg sync.WaitGroup
-		sem := make(chan struct{}, threads)
+		wg.Add(1)
+		sem <- struct{}{}
 
-		for _, account := range global.AccountsList {
-			wg.Add(1)
-			sem <- struct{}{}
+		go processAccount(ctx, sem, account, func_obj, wg)
 
-			go func(acc types.AccountData) {
-				defer wg.Done()
-				func_obj(acc)
-
-				global.CurrentProgress++
-
-				utils.Sleep(
-					global.Config.DelayBetweenAccs.Min,
-					global.Config.DelayBetweenAccs.Max,
-				)
-				<-sem
-			}(account)
-		}
-		wg.Wait()
 	}
+	wg.Wait()
 }
 
 func initLog() {
@@ -170,18 +169,22 @@ func main() {
 	utils.Sleep(delayMin, delayMax)
 
 	switch global.Module {
-	case "Mint FUN Starts NFT":
-		processAccounts(megaeth.MintFunNFT, threads)
 	case "Faucet test tokens":
 		processAccounts(megaeth.FaucetTokens, threads)
-	case "Mint Megamafia NFT":
-		processAccounts(megaeth.MintMegamafiaNFT, threads)
-	case "Mint Mega Cat NFT":
-		processAccounts(megaeth.MintMegaCatNFT, threads)
-	case "Mint Blackhole NFT":
-		processAccounts(megaeth.MintBlackholeNFT, threads)
-	case "Mint Xyroph NFT":
-		processAccounts(megaeth.MintXyrophNFT, threads)
+	case "Mint Megamafia NFT",
+		 "Mint FUN Starts NFT",
+		 "Mint Mega Cat NFT",
+		 "Mint Blackhole NFT",
+		 "Mint Xyroph NFT",
+		 "Mint Lord Lapin NFT",
+		 "Mint Angry Monkeys",
+		 "Mint Bloom NFT":
+		minter, err := megaeth.GetInterfaceByModuleName()
+		if err != nil {
+			log.Panic(err)
+		}
+		func_obj := megaeth.StartMint(minter)
+		processAccounts(func_obj, threads)
 	}
 
 	log.Printf("The Work Has Been Successfully Finished\n")
