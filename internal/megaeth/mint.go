@@ -17,16 +17,25 @@ import (
 	"main/pkg/utils"
 )
 
-func MintXyrophNFT(accountData accTypes.AccountData) (bool, error) {
-	log.Infof("[%d/%d] | %s | [MintXyrophNFT] | Start Minting Xyroph NFT ...\n",
-		global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
+func StartMint(m Mint) func(context.Context, accTypes.AccountData) (bool, error) {
+	funMinter, ok := m.(FunNFT)
+	if ok {
+		return funMinter.MintFunNFT
+	} else {
+		return m.Mint
+	}
+}
+
+func (n NFT) Mint(ctx context.Context, accountData accTypes.AccountData) (bool, error) {
+	log.Infof("[%d/%d] | %s | [%s] | Start minting ...\n",
+		global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName,
 	)
 
-	var contractAddress = "0xd59522848e5429986d6fe6607aef6b8e7706aea5"
+	var contractAddress = n.ContractAddress
 
 	quantity := big.NewInt(1)
 	currency := common.HexToAddress("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
-	pricePerToken := big.NewInt(1550000000000000)
+	pricePerToken := n.Value
 
 	leafIndex := big.NewInt(0)
 	leafAmount := new(big.Int)
@@ -56,8 +65,8 @@ func MintXyrophNFT(accountData accTypes.AccountData) (bool, error) {
 		signature,
 	)
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintXyrophNFT] | Problem with encoding parameters\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with encoding parameters\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
@@ -65,8 +74,8 @@ func MintXyrophNFT(accountData accTypes.AccountData) (bool, error) {
 
 	client, ok := internal.GetClient(&accountData)
 	if !ok {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintXyrophNFT] | Problem with client initialization\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with client initialization\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
@@ -75,12 +84,12 @@ func MintXyrophNFT(accountData accTypes.AccountData) (bool, error) {
 	tx, err := client.BuildTransaction(
 		contractAddress,
 		data,
-		big.NewInt(1550000000000000),
+		n.Value,
 	)
 
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintXyrophNFT] | Problem with building transaction: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with building transaction: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName, err,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
@@ -88,8 +97,8 @@ func MintXyrophNFT(accountData accTypes.AccountData) (bool, error) {
 
 	chainID, err := client.GetChainID()
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintXyrophNFT] | Problem with getting chainID: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with getting chainID: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName, err,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
@@ -101,25 +110,23 @@ func MintXyrophNFT(accountData accTypes.AccountData) (bool, error) {
 		client.Account.AccountKey,
 	)
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintXyrophNFT] | Problem with signing tx: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with signing tx: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName, err,
 		)
 		log.Error(msg)
 		return false, errors.New(msg)
 	}
 
-	ctx := context.Background()
-
 	err = client.Rpc.SendTransaction(ctx, signedTx)
 	if err != nil {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintXyrophNFT] | Problem with signing tx: %v\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, err,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Problem with signing tx: %v\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName, err,
 		)
 		log.Error(err)
 		return false, errors.New(msg)
 	} else {
-		msg := fmt.Sprintf("[%d/%d] | %s | [MintXyrophNFT] | Successfully executed transaction\n",
-			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress,
+		msg := fmt.Sprintf("[%d/%d] | %s | [%s] | Successfully executed transaction\n",
+			global.CurrentProgress, global.TargetProgress, accountData.AccountAddress, n.DisplayName,
 		)
 		log.Info(msg)
 	}

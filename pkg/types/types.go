@@ -1,13 +1,14 @@
 package types
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 )
 
-type ModuleFunction func(AccountData) (bool, error)
+type ModuleFunction func(context.Context, AccountData) (bool, error)
 
 type AccountData struct {
 	AccountKeyHex  string
